@@ -1,13 +1,14 @@
 # name is app.py so api can be start with `flask run` command without `--app <api name>`
-from flask import flask, jsonify
-from flask_cors import cors
+from flask import Flask, jsonify, request
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
 print(f'=={__name__}==')
 app = Flask(__name__)
-CORS(app) # enables CORS for all routes
+CORS(app)  # enables CORS for all routes
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://username:password@localhost/dbname'
 db = SQLAlchemy(app)
+
 
 class Business(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -15,6 +16,7 @@ class Business(db.Model):
     latitude = db.Column(db.Float, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     details = db.Column(db.Text)
+
 
 @app.route('/api/test')
 def test_api():
@@ -26,9 +28,9 @@ def create_businesses():
     # get data from db for location of business markers
     data = request.get_json()
     new_business = Business(
-            name=data['name'],
-            latitude=data['longitude'],
-            details=data['details'],
+        name=data['name'],
+        latitude=data['longitude'],
+        details=data['details'],
     )
     db.session.add(new_business)
     db.session.commit()
@@ -45,7 +47,7 @@ def get_businesses():
         'name': b.name,
         'latitude': b.latitude,
         'longitude': b.longitude,
-    } for b in business
+    } for b in businesses
     ]), 200
 
 
@@ -60,5 +62,3 @@ def get_business_data(id):
         'longitude': business.longitude,
         'details': business.details,
     }), 200
-
-
