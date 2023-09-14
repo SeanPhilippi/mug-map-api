@@ -1,0 +1,23 @@
+CREATE TABLE Businesses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    address1 VARCHAR(255),
+    address2 VARCHAR(255),
+    city VARCHAR(100),
+    country VARCHAR(100),
+    zip VARCHAR(20),
+    phone VARCHAR(20),
+    email VARCHAR(100),
+    instagram VARCHAR(255),
+    facebook VARCHAR(255),
+    x VARCHAR(255),
+    website VARCHAR(255),
+    hasMugs BOOLEAN,
+    no_mugs BOOLEAN,
+    wifi BOOLEAN,
+    work_friendly BOOLEAN,
+    description TEXT,
+    submitter_name VARCHAR(255),
+    submitter_email VARCHAR(100),
+    message_to_admin TEXT
+);
