@@ -35,6 +35,7 @@ class Business(db.Model):
     address1 = db.Column(db.String(255), nullable=False)
     address2 = db.Column(db.String(255))
     city = db.Column(db.String(100), nullable=False)
+    state = db.Column(db.String(100), nullable=False)
     country = db.Column(db.String(100), nullable=False)
     zip = db.Column(db.String(20), nullable=False)
     phone = db.Column(db.String(20))
@@ -50,9 +51,8 @@ class Business(db.Model):
     submitter_name = db.Column(db.String(255), nullable=False)
     submitter_email = db.Column(db.String(100), nullable=False)
     message_to_admin = db.Column(db.Text())
-    # Assuming latitude and longitude would be floats
-    # latitude = db.Column(db.Float())
-    # longitude = db.Column(db.Float())
+    latitude = db.Column(db.Float())
+    longitude = db.Column(db.Float())
 
 
 @app.route('/api/test')
@@ -70,6 +70,7 @@ def create_business():
             address1=data['address1'],
             address2=data['address2'],
             city=data['city'],
+            state=data['state'],
             country=data['country'],
             zip=data['zip'],
             phone=data['phone'],
@@ -85,8 +86,8 @@ def create_business():
             submitter_name=data['submitter_name'],
             submitter_email=data['submitter_email'],
             message_to_admin=data['message_to_admin'],
-            # latitude=data['latitude'],
-            # longitude=data['longitude'],
+            latitude=data['lat'],
+            longitude=data['lng'],
         )
         db.session.add(new_business)
         db.session.commit()
@@ -107,6 +108,7 @@ def get_businesses():
             'address1': b.address1,
             'address2': b.address2,
             'city': b.city,
+            'state': b.state,
             'country': b.country,
             'zip': b.zip,
             'phone': b.phone,
@@ -122,8 +124,8 @@ def get_businesses():
             'submitter_name': b.submitter_name,
             'submitter_email': b.submitter_email,
             'message_to_admin': b.message_to_admin,
-            # 'latitude': b.latitude,
-            # 'longitude': b.longitude,
+            'lat': b.latitude,
+            'lng': b.longitude,
         } for b in businesses
         ]), 200
     except Exception as e:
@@ -141,6 +143,7 @@ def get_business_data(id):
             'address1': business.address1,
             'address2': business.address2,
             'city': business.city,
+            'state': business.state,
             'country': business.country,
             'zip': business.zip,
             'phone': business.phone,
@@ -156,8 +159,8 @@ def get_business_data(id):
             'submitter_name': business.submitter_name,
             'submitter_email': business.submitter_email,
             'message_to_admin': business.message_to_admin,
-            # 'latitude': business.latitude,
-            # 'longitude': business.longitude,
+            'lat': business.latitude,
+            'lng': business.longitude,
         }), 200
     except Exception as e:
         return jsonify({'message': f'Error occurred: {str(e)}'}), 400
