@@ -90,70 +90,74 @@ def create_business():
         )
         db.session.add(new_business)
         db.session.commit()
-        return jsonify({'message': 'Record successfully added'}), 200
+        # return jsonify({'message': 'Record successfully added'}), 200
+        return jsonify({'message': 'Business successfully saved', 'business_id': new_business.id}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'message': f'Error occurred: {str(e)}'}), 400
-        # return jsonify({'message': 'business created', 'id': new_business.id}), 201
-        # return jsonify(data), 200
 
 
 @app.route('/api/businesses', methods=['GET'])
 def get_businesses():
-    # get data from db for location of business markers
-    businesses = Business.query.all()
-    return jsonify([{
-        'id': b.id,
-        'name': b.name,
-        'address1': b.address1,
-        'address2': b.address2,
-        'city': b.city,
-        'country': b.country,
-        'zip': b.zip,
-        'phone': b.phone,
-        'email': b.email,
-        'instagram': b.instagram,
-        'facebook': b.facebook,
-        'x': b.x,
-        'website': b.website,
-        'offers_mugs': b.offers_mugs,
-        'wifi': b.wifi,
-        'work_friendly': b.work_friendly,
-        'description': b.description,
-        'submitter_name': b.submitter_name,
-        'submitter_email': b.submitter_email,
-        'message_to_admin': b.message_to_admin,
-        # 'latitude': b.latitude,
-        # 'longitude': b.longitude,
-    } for b in businesses
-    ]), 200
+    try:
+        businesses = Business.query.all()
+        return jsonify([{
+            'id': b.id,
+            'name': b.name,
+            'address1': b.address1,
+            'address2': b.address2,
+            'city': b.city,
+            'country': b.country,
+            'zip': b.zip,
+            'phone': b.phone,
+            'email': b.email,
+            'instagram': b.instagram,
+            'facebook': b.facebook,
+            'x': b.x,
+            'website': b.website,
+            'offers_mugs': b.offers_mugs,
+            'wifi': b.wifi,
+            'work_friendly': b.work_friendly,
+            'description': b.description,
+            'submitter_name': b.submitter_name,
+            'submitter_email': b.submitter_email,
+            'message_to_admin': b.message_to_admin,
+            # 'latitude': b.latitude,
+            # 'longitude': b.longitude,
+        } for b in businesses
+        ]), 200
+    except Exception as e:
+        return jsonify({'message': f'Error occurred: {str(e)}'}), 400
 
 
 @app.route('/api/business/<int:id>', methods=['GET'])
 def get_business_data(id):
     # get data from db for a specific business for details card
-    business = Business.query.get_or_404(id)
-    return jsonify({
-        'id': business.id,
-        'name': business.name,
-        'address1': business.address1,
-        'address2': business.address2,
-        'city': business.city,
-        'country': business.country,
-        'zip': business.zip,
-        'phone': business.phone,
-        'email': business.email,
-        'instagram': business.instagram,
-        'facebook': business.facebook,
-        'x': business.x,
-        'website': business.website,
-        'offers_mugs': business.offers_mugs,
-        'wifi': business.wifi,
-        'work_friendly': business.work_friendly,
-        'description': business.description,
-        'submitter_name': business.submitter_name,
-        'submitter_email': business.submitter_email,
-        'message_to_admin': business.message_to_admin,
-        # 'latitude': business.latitude,
-        # 'longitude': business.longitude,
-    }), 200
+    try:
+        business = Business.query.get_or_404(id)
+        return jsonify({
+            'id': business.id,
+            'name': business.name,
+            'address1': business.address1,
+            'address2': business.address2,
+            'city': business.city,
+            'country': business.country,
+            'zip': business.zip,
+            'phone': business.phone,
+            'email': business.email,
+            'instagram': business.instagram,
+            'facebook': business.facebook,
+            'x': business.x,
+            'website': business.website,
+            'offers_mugs': business.offers_mugs,
+            'wifi': business.wifi,
+            'work_friendly': business.work_friendly,
+            'description': business.description,
+            'submitter_name': business.submitter_name,
+            'submitter_email': business.submitter_email,
+            'message_to_admin': business.message_to_admin,
+            # 'latitude': business.latitude,
+            # 'longitude': business.longitude,
+        }), 200
+    except Exception as e:
+        return jsonify({'message': f'Error occurred: {str(e)}'}), 400
