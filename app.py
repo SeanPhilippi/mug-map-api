@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from dotenv import load_dotenv
 import os
+import traceback
 
 # load .env which specifies to put the app in debug mode, helpful for development phase
 load_dotenv()
@@ -94,6 +95,7 @@ def create_business():
         # return jsonify({'message': 'Record successfully added'}), 200
         return jsonify({'message': 'Business successfully saved', 'business_id': new_business.id}), 200
     except Exception as e:
+        traceback.print_exc()
         db.session.rollback()
         return jsonify({'message': f'Error occurred: {str(e)}'}), 400
 
@@ -105,25 +107,25 @@ def get_businesses():
         return jsonify([{
             'id': b.id,
             'name': b.name,
-            'address1': b.address1,
-            'address2': b.address2,
-            'city': b.city,
-            'state': b.state,
-            'country': b.country,
-            'zip': b.zip,
-            'phone': b.phone,
-            'email': b.email,
-            'instagram': b.instagram,
-            'facebook': b.facebook,
-            'x': b.x,
-            'website': b.website,
+            # 'address1': b.address1,
+            # 'address2': b.address2,
+            # 'city': b.city,
+            # 'state': b.state,
+            # 'country': b.country,
+            # 'zip': b.zip,
+            # 'phone': b.phone,
+            # 'email': b.email,
+            # 'instagram': b.instagram,
+            # 'facebook': b.facebook,
+            # 'x': b.x,
+            # 'website': b.website,
             'offers_mugs': b.offers_mugs,
             'wifi': b.wifi,
             'work_friendly': b.work_friendly,
-            'description': b.description,
-            'submitter_name': b.submitter_name,
-            'submitter_email': b.submitter_email,
-            'message_to_admin': b.message_to_admin,
+            # 'description': b.description,
+            # 'submitter_name': b.submitter_name,
+            # 'submitter_email': b.submitter_email,
+            # 'message_to_admin': b.message_to_admin,
             'lat': b.latitude,
             'lng': b.longitude,
         } for b in businesses
