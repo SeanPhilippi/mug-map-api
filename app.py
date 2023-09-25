@@ -131,6 +131,7 @@ def get_businesses():
         } for b in businesses
         ]), 200
     except Exception as e:
+        traceback.print_exc()
         return jsonify({'message': f'Error occurred: {str(e)}'}), 400
 
 
