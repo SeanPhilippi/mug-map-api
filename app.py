@@ -45,9 +45,12 @@ class Business(db.Model):
     facebook = db.Column(db.String(100))
     x = db.Column(db.String(100))
     website = db.Column(db.String(255))
+    # additional info
     offers_mugs = db.Column(db.Boolean())
+    accepts_personal_mug = db.Column(db.Boolean())
     wifi = db.Column(db.Boolean())
     work_friendly = db.Column(db.Boolean())
+    sufficient_outlets = db.Column(db.Boolean())
     description = db.Column(db.Text())
     submitter_name = db.Column(db.String(255), nullable=False)
     submitter_email = db.Column(db.String(100), nullable=False)
@@ -59,45 +62,6 @@ class Business(db.Model):
 @app.route('/api/test')
 def test_api():
     return jsonify({'success': True, 'data': 'some test data'}), 200
-
-
-@app.route('/api/businesses', methods=['POST'])
-def create_business():
-    try:
-        data = request.get_json()
-        print(f'==data {data}')
-        new_business = Business(
-            name=data['name'],
-            address1=data['address1'],
-            address2=data['address2'],
-            city=data['city'],
-            state=data['state'],
-            country=data['country'],
-            zip=data['zip'],
-            phone=data['phone'],
-            email=data['email'],
-            instagram=data['instagram'],
-            facebook=data['facebook'],
-            x=data['x'],
-            website=data['website'],
-            offers_mugs=data['offers_mugs'],
-            wifi=data['wifi'],
-            work_friendly=data['work_friendly'],
-            description=data['description'],
-            submitter_name=data['submitter_name'],
-            submitter_email=data['submitter_email'],
-            message_to_admin=data['message_to_admin'],
-            latitude=data['lat'],
-            longitude=data['lng'],
-        )
-        db.session.add(new_business)
-        db.session.commit()
-        # return jsonify({'message': 'Record successfully added'}), 200
-        return jsonify({'message': 'Business successfully saved', 'business_id': new_business.id}), 200
-    except Exception as e:
-        traceback.print_exc()
-        db.session.rollback()
-        return jsonify({'message': f'Error occurred: {str(e)}'}), 400
 
 
 @app.route('/api/businesses', methods=['GET'])
@@ -120,8 +84,10 @@ def get_businesses():
             # 'x': b.x,
             # 'website': b.website,
             'offers_mugs': b.offers_mugs,
+            'accepts_personal_mug': b.accepts_personal_mug,
             'wifi': b.wifi,
             'work_friendly': b.work_friendly,
+            'sufficient_outlets': b.sufficient_outlets,
             # 'description': b.description,
             # 'submitter_name': b.submitter_name,
             # 'submitter_email': b.submitter_email,
@@ -134,7 +100,7 @@ def get_businesses():
         return jsonify({'message': f'Error occurred: {str(e)}'}), 400
 
 
-@app.route('/api/business/<int:id>', methods=['GET'])
+@app.route('/api/businesses/<int:id>', methods=['GET'])
 def get_business_data(id):
     # get data from db for a specific business for details card
     try:
@@ -155,8 +121,10 @@ def get_business_data(id):
             'x': business.x,
             'website': business.website,
             'offers_mugs': business.offers_mugs,
+            'accepts_personal_mug': business.accepts_personal_mug,
             'wifi': business.wifi,
             'work_friendly': business.work_friendly,
+            'sufficient_outlets': business.sufficient_outlets,
             'description': business.description,
             'submitter_name': business.submitter_name,
             'submitter_email': business.submitter_email,
@@ -165,4 +133,62 @@ def get_business_data(id):
             'lng': business.longitude,
         }), 200
     except Exception as e:
+        return jsonify({'message': f'Error occurred: {str(e)}'}), 400
+
+
+@app.route('/api/businesses', methods=['POST'])
+def create_business():
+    try:
+        data = request.get_json()
+        print(f'==data {data}')
+        new_business = Business(
+            name=data['name'],
+            address1=data['address1'],
+            address2=data['address2'],
+            city=data['city'],
+            state=data['state'],
+            country=data['country'],
+            zip=data['zip'],
+            phone=data['phone'],
+            email=data['email'],
+            instagram=data['instagram'],
+            facebook=data['facebook'],
+            x=data['x'],
+            website=data['website'],
+            # additional info
+            offers_mugs=data['offers_mugs'],
+            accepts_personal_mug=data['accepts_personal_mug'],
+            wifi=data['wifi'],
+            work_friendly=data['work_friendly'],
+            sufficient_outlets=data['sufficient_outlets'],
+            description=data['description'],
+            submitter_name=data['submitter_name'],
+            submitter_email=data['submitter_email'],
+            message_to_admin=data['message_to_admin'],
+            latitude=data['lat'],
+            longitude=data['lng'],
+        )
+        db.session.add(new_business)
+        db.session.commit()
+        return jsonify({'message': 'Business successfully saved', 'business_name': new_business.name}), 200
+    except Exception as e:
+        traceback.print_exc()
+        db.session.rollback()
+        return jsonify({'message': f'Error occurred: {str(e)}'}), 400
+
+
+@app.route('/api/businesses/<int:id>', methods=['PUT'])
+def update_business(id):
+    try:
+        business = Business.query.get_or_404(id)
+        updated_data = request.get_json()
+        print(f'==updated_data {updated_data}')
+        for key, value in updated_data.items():
+            if hasattr(business, key):
+                setattr(business, key, value)
+        db.session.commit()
+        return jsonify({'message': 'Business successfully updated', 'business_name': business.name}), 200
+    except Exception as e:
+        traceback.print_exc()
+        db.session.rollback()
         return jsonify({'message': f'Error occurred: {str(e)}'}), 400
