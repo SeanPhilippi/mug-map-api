@@ -64,10 +64,26 @@ def test_api():
     return jsonify({'success': True, 'data': 'some test data'}), 200
 
 
-@app.route('/api/businesses', methods=['GET'])
-def get_businesses():
+@app.route('/api/businesses/', methods=['GET'])
+@app.route('/api/businesses/<filters>', methods=['GET'])
+def get_businesses(filters=None):
+    print(f'==filters {filters}')
     try:
-        businesses = Business.query.all()
+        if filters is not None:
+            filters_map = {
+                'offersMugs': 'offers_mugs',
+                'acceptsPersonalMug': 'accepts_personal_mug',
+                'wifi': 'wifi',
+                'workFriendly': 'work_friendly',
+                'outlets': 'outlets',
+            }
+            parsed_filters = [filters_map.get(filter_value, filter_value) for filter_value in filters.split(',')]
+            filter_conditions = [getattr(Business, filter_column) == 1 for filter_column in parsed_filters]
+            # asterisk acts as a spread operator to spread out the filter conditions to be implicitly anded together
+            businesses = Business.query.filter(*filter_conditions).all()
+        else:
+            businesses = Business.query.all()
+
         return jsonify([{
             'id': b.id,
             'name': b.name,
