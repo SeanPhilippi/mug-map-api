@@ -4,6 +4,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from dotenv import load_dotenv
+from flask_bcrypt import Bcrypt
 import os
 import traceback
 
@@ -27,6 +28,23 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+bcrypt = Bcrypt()
+
+
+class Admin(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), unique=True)
+    password = db.Column(db.String(100))
+
+    def __init__(self, email, password):
+        self.email = email
+        self.password = password
+
+    # string representation of class for debugging
+    def __repr__(self):
+        # !r is how to get the raw representation
+        return f'<Admin {self.email!r}>'
 
 
 # mysql will use plural of this class name as the assumed table to save to
@@ -59,9 +77,38 @@ class Business(db.Model):
     longitude = db.Column(db.Float())
 
 
-@app.route('/api/test')
-def test_api():
-    return jsonify({'success': True, 'data': 'some test data'}), 200
+@app.route('/api/admin/register', methods=['POST'])
+def register():
+    email = request.json.get('email')
+    password = request.json.get('password')
+
+    if email and password:
+        # Hash the password
+        hashed_password = bcrypt.generate_password_hash(password)
+
+        # Create admin object with the hashed password
+        admin = Admin(email=email, password=hashed_password)
+
+        # Add to database
+        db.session.add(admin)
+        db.session.commit()
+
+    else:
+        return jsonify({'message': 'Invalid data provided for registration'})
+
+
+@app.route('/api/admin/login', methods=['POST'])
+def admin_login():
+    email = request.json.get('email')
+    password = request.json.get('password')
+
+    admin = Admin.query.filter_by(email=email).first()
+    if admin and bcrypt.check_password_hash(admin.password, password):
+        # Handle successful login
+        return jsonify({'message': 'Login successful'})
+    else:
+        # Handle failed login
+        return jsonify({'message': 'Invalid credentials'})
 
 
 @app.route('/api/businesses/', methods=['GET'])
