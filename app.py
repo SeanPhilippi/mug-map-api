@@ -92,9 +92,10 @@ def register():
         # Add to database
         db.session.add(admin)
         db.session.commit()
+        return jsonify({'message': 'User was successfully registered'}), 200
 
     else:
-        return jsonify({'message': 'Invalid data provided for registration'})
+        return jsonify({'message': 'Invalid data provided for registration'}), 400
 
 
 @app.route('/api/admin/login', methods=['POST'])
@@ -105,10 +106,10 @@ def admin_login():
     admin = Admin.query.filter_by(email=email).first()
     if admin and bcrypt.check_password_hash(admin.password, password):
         # Handle successful login
-        return jsonify({'message': 'Login successful'})
+        return jsonify({'message': 'Login successful'}), 200
     else:
         # Handle failed login
-        return jsonify({'message': 'Invalid credentials'})
+        return jsonify({'message': 'Invalid credentials'}), 400
 
 
 @app.route('/api/businesses/', methods=['GET'])
