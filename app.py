@@ -106,7 +106,7 @@ def admin_login():
     admin = Admin.query.filter_by(email=email).first()
     if admin and bcrypt.check_password_hash(admin.password, password):
         # Handle successful login
-        return jsonify({'message': 'Login successful'}), 200
+        return jsonify({'message': 'Login successful!'}), 200
     else:
         # Handle failed login
         return jsonify({'message': 'Invalid credentials'}), 400
@@ -123,7 +123,7 @@ def get_businesses(filters=None):
                 'acceptsPersonalMug': 'accepts_personal_mug',
                 'wifi': 'wifi',
                 'workFriendly': 'work_friendly',
-                'outlets': 'outlets',
+                'sufficient_outlets': 'sufficient_outlets',
             }
             parsed_filters = [filters_map.get(filter_value, filter_value) for filter_value in filters.split(',')]
             filter_conditions = [getattr(Business, filter_column) == 1 for filter_column in parsed_filters]
