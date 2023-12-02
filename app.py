@@ -4,6 +4,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from dotenv import load_dotenv
+from datetime import datetime
 from flask_bcrypt import Bcrypt
 import os
 import traceback
@@ -50,6 +51,7 @@ class Admin(db.Model):
 # mysql will use plural of this class name as the assumed table to save to
 class Business(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    last_updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     name = db.Column(db.String(255), nullable=False)
     address1 = db.Column(db.String(255), nullable=False)
     address2 = db.Column(db.String(255))
@@ -67,7 +69,69 @@ class Business(db.Model):
     offers_mugs = db.Column(db.Boolean())
     accepts_personal_mug = db.Column(db.Boolean())
     wifi = db.Column(db.Boolean())
-    work_friendly = db.Column(db.Boolean())
+    sufficient_outlets = db.Column(db.Boolean())
+    description = db.Column(db.Text())
+    submitter_name = db.Column(db.String(255), nullable=False)
+    submitter_email = db.Column(db.String(100), nullable=False)
+    message_to_admin = db.Column(db.Text())
+    latitude = db.Column(db.Float())
+    longitude = db.Column(db.Float())
+
+
+class NewBusinessSubmission(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    original_business_id = db.Column(db.Integer)
+    # don't give this value when using this model, it will always be 'new'
+    submission_type = db.Column(db.String(10), default='new', nullable=True)
+    name = db.Column(db.String(255), nullable=False)
+    address1 = db.Column(db.String(255), nullable=False)
+    address2 = db.Column(db.String(255))
+    city = db.Column(db.String(100), nullable=False)
+    state = db.Column(db.String(100), nullable=False)
+    country = db.Column(db.String(100), nullable=False)
+    zip = db.Column(db.String(20), nullable=False)
+    phone = db.Column(db.String(20))
+    email = db.Column(db.String(255))
+    instagram = db.Column(db.String(100))
+    facebook = db.Column(db.String(100))
+    x = db.Column(db.String(100))
+    website = db.Column(db.String(255))
+    # additional info
+    offers_mugs = db.Column(db.Boolean())
+    accepts_personal_mug = db.Column(db.Boolean())
+    wifi = db.Column(db.Boolean())
+    sufficient_outlets = db.Column(db.Boolean())
+    description = db.Column(db.Text())
+    submitter_name = db.Column(db.String(255), nullable=False)
+    submitter_email = db.Column(db.String(100), nullable=False)
+    message_to_admin = db.Column(db.Text())
+    latitude = db.Column(db.Float())
+    longitude = db.Column(db.Float())
+
+
+class UpdateBusinessSubmission(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    original_business_id = db.Column(db.Integer)
+    # don't give this value when using this model, it will always be 'update'
+    submission_type = db.Column(db.String(10), default='update')
+    submission_date = db.Column(db.DateTime, default=datetime.utcnow)
+    name = db.Column(db.String(255))
+    address1 = db.Column(db.String(255))
+    address2 = db.Column(db.String(255))
+    city = db.Column(db.String(100))
+    state = db.Column(db.String(100))
+    country = db.Column(db.String(100))
+    zip = db.Column(db.String(20))
+    phone = db.Column(db.String(20))
+    email = db.Column(db.String(255))
+    instagram = db.Column(db.String(100))
+    facebook = db.Column(db.String(100))
+    x = db.Column(db.String(100))
+    website = db.Column(db.String(255))
+    # additional info
+    offers_mugs = db.Column(db.Boolean())
+    accepts_personal_mug = db.Column(db.Boolean())
+    wifi = db.Column(db.Boolean())
     sufficient_outlets = db.Column(db.Boolean())
     description = db.Column(db.Text())
     submitter_name = db.Column(db.String(255), nullable=False)
@@ -122,7 +186,6 @@ def get_businesses(filters=None):
                 'offersMugs': 'offers_mugs',
                 'acceptsPersonalMug': 'accepts_personal_mug',
                 'wifi': 'wifi',
-                'workFriendly': 'work_friendly',
                 'sufficient_outlets': 'sufficient_outlets',
             }
             parsed_filters = [filters_map.get(filter_value, filter_value) for filter_value in filters.split(',')]
@@ -138,7 +201,6 @@ def get_businesses(filters=None):
             'offers_mugs': b.offers_mugs,
             'accepts_personal_mug': b.accepts_personal_mug,
             'wifi': b.wifi,
-            'work_friendly': b.work_friendly,
             'sufficient_outlets': b.sufficient_outlets,
             'lat': b.latitude,
             'lng': b.longitude,
@@ -171,7 +233,6 @@ def get_business_data(id):
             'offers_mugs': business.offers_mugs,
             'accepts_personal_mug': business.accepts_personal_mug,
             'wifi': business.wifi,
-            'work_friendly': business.work_friendly,
             'sufficient_outlets': business.sufficient_outlets,
             'description': business.description,
             'lat': business.latitude,
@@ -204,7 +265,6 @@ def create_business():
             offers_mugs=data['offers_mugs'],
             accepts_personal_mug=data['accepts_personal_mug'],
             wifi=data['wifi'],
-            work_friendly=data['work_friendly'],
             sufficient_outlets=data['sufficient_outlets'],
             description=data['description'],
             submitter_name=data['submitter_name'],
