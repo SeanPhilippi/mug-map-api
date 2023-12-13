@@ -53,12 +53,13 @@ class Business(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     last_updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     name = db.Column(db.String(255), nullable=False)
-    address1 = db.Column(db.String(255), nullable=False)
-    address2 = db.Column(db.String(255))
-    city = db.Column(db.String(100), nullable=False)
-    state = db.Column(db.String(100), nullable=False)
-    country = db.Column(db.String(100), nullable=False)
-    zip = db.Column(db.String(20), nullable=False)
+    address = db.Column(db.String(255), nullable=False)
+    # address1 = db.Column(db.String(255), nullable=False)
+    # address2 = db.Column(db.String(255))
+    # city = db.Column(db.String(100), nullable=False)
+    # state = db.Column(db.String(100), nullable=False)
+    # country = db.Column(db.String(100), nullable=False)
+    # zip = db.Column(db.String(20), nullable=False)
     phone = db.Column(db.String(20))
     email = db.Column(db.String(255))
     instagram = db.Column(db.String(100))
@@ -84,12 +85,13 @@ class NewBusinessSubmission(db.Model):
     # don't give this value when using this model, it will always be 'new'
     submission_type = db.Column(db.String(10), default='new', nullable=True)
     name = db.Column(db.String(255), nullable=False)
-    address1 = db.Column(db.String(255), nullable=False)
-    address2 = db.Column(db.String(255))
-    city = db.Column(db.String(100), nullable=False)
-    state = db.Column(db.String(100), nullable=False)
-    country = db.Column(db.String(100), nullable=False)
-    zip = db.Column(db.String(20), nullable=False)
+    address = db.Column(db.String(255), nullable=False)
+    # address1 = db.Column(db.String(255), nullable=False)
+    # address2 = db.Column(db.String(255))
+    # city = db.Column(db.String(100), nullable=False)
+    # state = db.Column(db.String(100), nullable=False)
+    # country = db.Column(db.String(100), nullable=False)
+    # zip = db.Column(db.String(20), nullable=False)
     phone = db.Column(db.String(20))
     email = db.Column(db.String(255))
     instagram = db.Column(db.String(100))
@@ -116,12 +118,13 @@ class UpdateBusinessSubmission(db.Model):
     submission_type = db.Column(db.String(10), default='update')
     submission_date = db.Column(db.DateTime, default=datetime.utcnow)
     name = db.Column(db.String(255))
-    address1 = db.Column(db.String(255))
-    address2 = db.Column(db.String(255))
-    city = db.Column(db.String(100))
-    state = db.Column(db.String(100))
-    country = db.Column(db.String(100))
-    zip = db.Column(db.String(20))
+    address = db.Column(db.String(255))
+    # address1 = db.Column(db.String(255))
+    # address2 = db.Column(db.String(255))
+    # city = db.Column(db.String(100))
+    # state = db.Column(db.String(100))
+    # country = db.Column(db.String(100))
+    # zip = db.Column(db.String(20))
     phone = db.Column(db.String(20))
     email = db.Column(db.String(255))
     instagram = db.Column(db.String(100))
@@ -186,7 +189,7 @@ def get_businesses(filters=None):
                 'offersMugs': 'offers_mugs',
                 'acceptsPersonalMug': 'accepts_personal_mug',
                 'wifi': 'wifi',
-                'sufficient_outlets': 'sufficient_outlets',
+                'sufficientOutlets': 'sufficient_outlets',
             }
             parsed_filters = [filters_map.get(filter_value, filter_value) for filter_value in filters.split(',')]
             filter_conditions = [getattr(Business, filter_column) == 1 for filter_column in parsed_filters]
@@ -218,12 +221,13 @@ def get_business_data(id):
         return jsonify({
             'id': business.id,
             'name': business.name,
-            'address1': business.address1,
-            'address2': business.address2,
-            'city': business.city,
-            'state': business.state,
-            'country': business.country,
-            'zip': business.zip,
+            'address': business.address,
+            # 'address1': business.address1,
+            # 'address2': business.address2,
+            # 'city': business.city,
+            # 'state': business.state,
+            # 'country': business.country,
+            # 'zip': business.zip,
             'phone': business.phone,
             'email': business.email,
             'instagram': business.instagram,
@@ -249,12 +253,13 @@ def create_business():
         print(f'==data {data}')
         new_business = Business(
             name=data['name'],
-            address1=data['address1'],
-            address2=data['address2'],
-            city=data['city'],
-            state=data['state'],
-            country=data['country'],
-            zip=data['zip'],
+            address=data['address'],
+            # address1=data['address1'],
+            # address2=data['address2'],
+            # city=data['city'],
+            # state=data['state'],
+            # country=data['country'],
+            # zip=data['zip'],
             phone=data['phone'],
             email=data['email'],
             instagram=data['instagram'],
