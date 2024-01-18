@@ -29,6 +29,10 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 
+# create database w sql alchemy
+# db.
+
+
 # mysql will use plural of this class name as the assumed table to save to
 class Business(db.Model):
     id = db.Column(db.Integer, primary_key=True)
