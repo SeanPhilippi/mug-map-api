@@ -1,16 +1,43 @@
-FROM python:3.9-slim
+FROM python:3.10-alpine
 
-# Copy the requirements file
+# where to put in linux env
+WORKDIR /app
 COPY requirements.txt .
+COPY app.py .
+COPY .env .
+COPY migrations .
+RUN apk update \
+    && apk add --virtual build-deps gcc python3-dev musl-dev \
+    && apk add --no-cache mariadb-dev
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
-# Copy the Flask API code
-COPY . .
 
-# Expose the port that your Flask API listens to
-EXPOSE 5000
+RUN apk del build-deps
 
-# Specify the command to start the Flask API
-CMD ["gunicorn", "app:app", "-b", "0.0.0.0:5000"]
+ENV FLASK_APP app.py
+ENV FLASK_ENV development
+# default port is 5000, but changing to 8000
+ENV FLASK_RUN_PORT 8000
+ENV FLASK_RUN_HOST 0.0.0.0
+
+EXPOSE 8000
+
+CMD ["flask", "run"]
+
+#FROM builder AS dev-envs
+
+#RUN <<EOF
+#apk update
+#apk add git
+#EOF
+
+#RUN <<EOF
+#addgroup -S docker
+#adduser -S --shell /bin/bash --ingroup docker vscode
+#EOF
+
+# install Docker tools (cli, buildx, compose)
+#COPY --from=gloursdocker/docker / /
+
+#CMD ["flask", "run"]
